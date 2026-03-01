@@ -1,7 +1,7 @@
 Feature: Pet Store API
 
   @Petstore
-  Scenario: Verify that a pet can be added and then retrieved
+  Scenario: Verify that a pet can be added and then retrieved by
     Given get the scheme "petstore"
     And update the json path "status" with value "available"
     When post request send with endpoint "pet"
