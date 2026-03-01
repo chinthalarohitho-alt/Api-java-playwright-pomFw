@@ -7,4 +7,4 @@ Feature: Pet Store API
     When post request send with endpoint "pet"
     Then the response status code should be 200
     And the json path "name" should be "Rocky"
-    And the json path "status" should be "available"
+    And the json path "status" should b "available"
