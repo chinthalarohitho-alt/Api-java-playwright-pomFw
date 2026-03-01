@@ -2,7 +2,7 @@ Feature: Pet Store API
 
   @Petstore
   Scenario: Verify that a pet can be added and then retrieved
-    Given get the scheme "petstor"
+    Given get the scheme "petstore"
     And update the json path "status" with value "available"
     When post request send with endpoint "pet"
     Then the response status code should be 200
