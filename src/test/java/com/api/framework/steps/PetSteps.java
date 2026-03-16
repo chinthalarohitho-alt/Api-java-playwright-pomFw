@@ -5,8 +5,6 @@ import com.api.framework.config.ScenarioContext;
 
 import com.api.framework.utils.APIUtils;
 import io.cucumber.java.en.*;
-import com.api.framework.utils.APIUtils;
-import io.cucumber.java.en.*;
 
 public class PetSteps {
 
