@@ -1,4 +1,5 @@
 package com.api.framework.utils;
+import com.api.framework.config.ConfigReader;
 import com.api.framework.config.Settings;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.DocumentContext;
@@ -196,6 +197,13 @@ public final class APIUtils {
             context = JsonPath.parse(payload);
         }
         return context.set(path, value).jsonString();
+    }
+
+    public static String getSessionPrefixedValue(String value) {
+        if (Settings.SessionID == null) {
+            ConfigReader.PopulateSettings();
+        }
+        return Settings.SessionID + "_" + value;
     }
 
 }

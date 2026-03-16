@@ -11,4 +11,5 @@ public class Settings {
     public static String chatGptUrl;
     public static String geminiAppUrl;
     public static String EnvName;
+    public static String SessionID;
 }

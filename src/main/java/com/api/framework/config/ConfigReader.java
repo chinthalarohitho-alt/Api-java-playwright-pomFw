@@ -38,8 +38,16 @@ public class ConfigReader {
             Settings.Username = envConfig.username();
             Settings.Password = envConfig.password();
 
+            // Session ID for data consistency (prefixed with "B" for Build in Jenkins, otherwise "S" for Session)
+            String buildNumber = System.getenv("BUILD_NUMBER");
+            if (buildNumber != null && !buildNumber.isEmpty()) {
+                Settings.SessionID = "Build" + buildNumber;
+            } else {
+                Settings.SessionID = "S" + java.time.Instant.now().getEpochSecond();
+            }
+
             logger.info("✅ Configuration loaded successfully");
-            logger.info("Environment: {}, URL: {}", Settings.EnvName, Settings.Url);
+            logger.info("Environment: {}, URL: {}, SessionID: {}", Settings.EnvName, Settings.Url, Settings.SessionID);
 
         } catch (Exception e) {
             logger.error("❌ Failed to load configuration", e);

@@ -5,8 +5,8 @@ import com.api.framework.config.ScenarioContext;
 
 import com.api.framework.utils.APIUtils;
 import io.cucumber.java.en.*;
-import java.util.HashMap;
-import java.util.Map;
+import com.api.framework.utils.APIUtils;
+import io.cucumber.java.en.*;
 
 public class PetSteps {
 
@@ -63,16 +63,22 @@ public class PetSteps {
 
     @Given("update the json path {string} with a random numeric value")
     public void update_the_json_path_with_a_random_numeric_value(String path) {
+        // We keep numeric ID as numeric if possible, but for consistency we might use session prefix
+        // If the API allows string IDs or if we want to ensure uniqueness via session prefix
         String randomId = String.valueOf((int) (Math.random() * 1000000) + 1000);
+        // If we want to strictly follow "sessionid + random number", we might need to handle numeric types carefully.
+        // Assuming the user wants string representation for consistency.
+        String prefixedId = APIUtils.getSessionPrefixedValue(randomId);
         String fullPath = path.startsWith("$") ? path : "$." + path;
-        payload = APIUtils.updateTheJsonValue(payload, fullPath, randomId);
+        payload = APIUtils.updateTheJsonValue(payload, fullPath, prefixedId);
     }
 
     @Given("update the json path {string} with a random string value")
     public void update_the_json_path_with_a_random_string_value(String path) {
         String randomStr = "user_" + (int) (Math.random() * 100000);
+        String prefixedStr = APIUtils.getSessionPrefixedValue(randomStr);
         String fullPath = path.startsWith("$") ? path : "$." + path;
-        payload = APIUtils.updateTheJsonValue(payload, fullPath, randomStr);
+        payload = APIUtils.updateTheJsonValue(payload, fullPath, prefixedStr);
     }
 
     @Given("update the json path {string} with value {string}")
