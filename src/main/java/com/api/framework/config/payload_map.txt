@@ -1,2 +1,5 @@
-addPet=src/main/java/com/api/framework/config/payloads/pet_payload.txt
+addPet=src/main/java/com/api/framework/config/payloads/pet_payload_petstore.txt
 petstore=src/main/java/com/api/framework/config/payloads/pet_payload_petstore.txt
+storeOrder=src/main/java/com/api/framework/config/payloads/store_order_payload.txt
+createUser=src/main/java/com/api/framework/config/payloads/user_payload.txt
+updatePet=src/main/java/com/api/framework/config/payloads/pet_update_payload.txt

@@ -25,12 +25,6 @@ public class FrameworkHooks extends BaseAPI {
         }
         ConfigReader.PopulateSettings();
         createRequestContext(context, Settings.Url);
-        
-        // Start Playwright Tracing
-        context.getBrowserContext().tracing().start(new com.microsoft.playwright.Tracing.StartOptions()
-                .setScreenshots(true)
-                .setSnapshots(true)
-                .setSources(true));
     }
 
     private void deleteDirectory(java.io.File directoryToBeDeleted) {
@@ -46,27 +40,6 @@ public class FrameworkHooks extends BaseAPI {
 
     @After
     public void tearDown(Scenario scenario) {
-        if (scenario.isFailed()) {
-            // Only stop and save to zip if failed
-            String tracePath = "allure-results/trace-" + System.currentTimeMillis() + ".zip";
-            
-            try {
-                context.getBrowserContext().tracing().stop(new com.microsoft.playwright.Tracing.StopOptions()
-                        .setPath(java.nio.file.Paths.get(tracePath)));
-                
-                byte[] traceContent = java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(tracePath));
-                io.qameta.allure.Allure.addAttachment("Playwright Trace", "application/zip", new java.io.ByteArrayInputStream(traceContent), ".zip");
-            } catch (Exception e) {
-                System.err.println("Failed to capture/attach trace: " + e.getMessage());
-                try { context.getBrowserContext().tracing().stop(); } catch (Exception ignored) {}
-            }
-        } else {
-            // For passed tests, just stop tracing without saving
-            try {
-                context.getBrowserContext().tracing().stop();
-            } catch (Exception ignored) {}
-        }
-        
         closeRequestContext(context);
     }
 }

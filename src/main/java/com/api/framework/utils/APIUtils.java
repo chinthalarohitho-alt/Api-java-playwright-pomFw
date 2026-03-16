@@ -73,10 +73,68 @@ public final class APIUtils {
         Assert.assertEquals(response.status(), expectedCode, "Unexpected status code!");
     }
 
+    public static void validateField(APIResponse response, String jsonPath, Object expectedValue) {
+        String body = new String(response.body(), StandardCharsets.UTF_8);
+        Object actualValue = JsonPath.read(body, jsonPath);
+        
+        // If expectedValue is a string that looks like a number, but actual is Number, convert for comparison
+        if (actualValue instanceof Number && expectedValue instanceof String) {
+            try {
+                Double expectedDouble = Double.parseDouble((String) expectedValue);
+                Assert.assertEquals(((Number) actualValue).doubleValue(), expectedDouble, "Mismatch for field: " + jsonPath);
+                return;
+            } catch (NumberFormatException e) { /* fallback to string compare */ }
+        }
+        
+        // If expectedValue is a string that looks like a boolean
+        if (actualValue instanceof Boolean && expectedValue instanceof String) {
+            Boolean expectedBool = Boolean.parseBoolean((String) expectedValue);
+            Assert.assertEquals(actualValue, expectedBool, "Mismatch for field: " + jsonPath);
+            return;
+        }
+
+        Assert.assertEquals(actualValue.toString(), expectedValue.toString(), "Mismatch for field: " + jsonPath);
+    }
+
     public static void validateString(APIResponse response, String jsonPath, String expectedValue) {
         String body = new String(response.body(), StandardCharsets.UTF_8);
         Object actualValue = JsonPath.read(body, jsonPath);
         Assert.assertEquals(actualValue.toString(), expectedValue, "Mismatch for field: " + jsonPath);
+    }
+
+    public static void validateType(APIResponse response, String jsonPath, String expectedType) {
+        String body = new String(response.body(), StandardCharsets.UTF_8);
+        Object actualValue = JsonPath.read(body, jsonPath);
+        
+        switch (expectedType.toLowerCase()) {
+            case "string":
+                Assert.assertTrue(actualValue instanceof String, "Field " + jsonPath + " is not a String!");
+                break;
+            case "integer":
+            case "number":
+                Assert.assertTrue(actualValue instanceof Number, "Field " + jsonPath + " is not a Number!");
+                break;
+            case "boolean":
+                Assert.assertTrue(actualValue instanceof Boolean, "Field " + jsonPath + " is not a Boolean!");
+                break;
+            case "array":
+            case "list":
+                Assert.assertTrue(actualValue instanceof java.util.List, "Field " + jsonPath + " is not a List/Array!");
+                break;
+            case "object":
+            case "map":
+                Assert.assertTrue(actualValue instanceof java.util.Map, "Field " + jsonPath + " is not an Object/Map!");
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported type for validation: " + expectedType);
+        }
+    }
+
+    public static void validateMatches(APIResponse response, String jsonPath, String regex) {
+        String body = new String(response.body(), StandardCharsets.UTF_8);
+        Object actualValue = JsonPath.read(body, jsonPath);
+        Assert.assertTrue(actualValue.toString().matches(regex), 
+            "Field " + jsonPath + " value [" + actualValue + "] does not match pattern: " + regex);
     }
     
     // --- Generic HTTP Methods ---
